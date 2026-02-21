@@ -1,0 +1,110 @@
+"use client";
+
+import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+
+export function DomainInput() {
+    const [domain, setDomain] = useState("");
+    const [consent, setConsent] = useState(false);
+    const [isScanning, setIsScanning] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
+
+    const handleScan = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError(null);
+
+        if (domain && consent) {
+            setIsScanning(true);
+
+            try {
+                const response = await fetch("/api/scan", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ domain, consent }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || "Scan request failed");
+                }
+
+                // Once we have the scan_id, redirect to the report page
+                if (data.scan_id) {
+                    router.push(`/report/${data.scan_id}`);
+                }
+            } catch (err: any) {
+                setError(err.message || "An unexpected error occurred");
+                setIsScanning(false);
+            }
+        }
+    };
+
+    return (
+        <form onSubmit={handleScan} className="w-full max-w-2xl mx-auto space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4">
+                <Input
+                    type="text"
+                    placeholder="example.com"
+                    value={domain}
+                    onChange={(e) => setDomain(e.target.value)}
+                    disabled={isScanning}
+                    className="font-mono text-lg py-6 bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-emerald-500"
+                    required
+                />
+                <Button
+                    type="submit"
+                    disabled={!consent || !domain || isScanning}
+                    className="py-6 px-8 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[160px]"
+                >
+                    {isScanning ? (
+                        <>
+                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                            Scanning...
+                        </>
+                    ) : (
+                        "Scan Now"
+                    )}
+                </Button>
+            </div>
+
+            {error && (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+                    {error}
+                </div>
+            )}
+
+            {isScanning && !error && (
+                <div className="p-4 bg-zinc-900/50 border border-zinc-800/50 rounded-lg flex flex-col items-center justify-center space-y-3 animate-pulse">
+                    <p className="text-emerald-400 font-mono text-sm">Initializing recon modules...</p>
+                    <div className="w-full bg-zinc-800 rounded-full h-1.5 overflow-hidden">
+                        <div className="bg-emerald-500 h-full rounded-full w-full animate-[progress_2s_ease-in-out_infinite]" style={{ transformOrigin: 'left' }}></div>
+                    </div>
+                </div>
+            )}
+
+            <div className="flex items-start space-x-3 p-4 bg-zinc-900/50 border border-zinc-800/50 rounded-lg">
+                <Checkbox
+                    id="consent"
+                    checked={consent}
+                    disabled={isScanning}
+                    onCheckedChange={(checked) => setConsent(checked as boolean)}
+                    className="mt-1 border-zinc-600 data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500 focus-visible:ring-emerald-500"
+                />
+                <label
+                    htmlFor="consent"
+                    className="text-sm text-zinc-400 leading-relaxed cursor-pointer"
+                >
+                    I confirm that I am authorized to perform a security scan on this domain.
+                    Scanning domains you do not own or have explicit permission to test may be illegal.
+                    SentinelScan accepts no liability for misuse.
+                </label>
+            </div>
+        </form>
+    );
+}
