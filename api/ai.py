@@ -34,7 +34,7 @@ async def stream_ai_report(scan_id: str, raw_data: dict) -> StreamingResponse:
         }
         
         data = {
-            "model": "deepseek/deepseek-r1:free", # Free tier model specified via OpenRouter
+            "model": "arcee-ai/trinity-large-preview:free",
             "messages": [
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": f"Please analyze this raw scan data:\n\n{json.dumps(raw_data, indent=2)}"}

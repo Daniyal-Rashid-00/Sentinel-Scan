@@ -34,8 +34,25 @@ export function DomainInput() {
                     throw new Error(data.detail || "Scan request failed");
                 }
 
-                // Once we have the scan_id, redirect to the report page
+                // Once we have the scan_id, cache raw_data locally and redirect
                 if (data.scan_id) {
+                    // Store in localStorage as a fallback for the report page
+                    try {
+                        localStorage.setItem(
+                            `scan_${data.scan_id}`,
+                            JSON.stringify({
+                                id: data.scan_id,
+                                domain: domain,
+                                raw_data: data.raw_data,
+                                ai_report: null,
+                                risk_score: null,
+                                status: "scanning",
+                                created_at: new Date().toISOString(),
+                            })
+                        );
+                    } catch (e) {
+                        // localStorage unavailable (SSR/private mode), ignore
+                    }
                     router.push(`/report/${data.scan_id}`);
                 }
             } catch (err: any) {

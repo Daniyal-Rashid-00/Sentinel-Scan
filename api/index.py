@@ -59,6 +59,15 @@ async def generate_report(request: Request, body: ReportRequest):
     # FastAPI streaming response
     return await stream_ai_report(body.scan_id, raw_data)
 
+@app.get("/api/scan/{scan_id}")
+async def get_scan_data(scan_id: str):
+    scan_record = get_scan(scan_id)
+    if not scan_record:
+        raise HTTPException(status_code=404, detail="Scan not found.")
+    # Don't expose client_ip to frontend
+    scan_record.pop("client_ip", None)
+    return scan_record
+
 @app.get("/api/health")
 def health_check():
     return {"status": "ok"}
