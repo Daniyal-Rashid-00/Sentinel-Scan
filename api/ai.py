@@ -8,16 +8,23 @@ from .db import update_scan_report
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-SYSTEM_PROMPT = """You are an elite Cybersecurity Analyst. You have been given structured JSON recon data from an automated scan. Generate a concise, professional vulnerability assessment report in clean Markdown with the following sections:
+SYSTEM_PROMPT = """You are an elite Cybersecurity Assessor. Generate a highly structured, professional vulnerability assessment report adhering to international cybersecurity standards (e.g., CVSS-inspired, OWASP Top 10) based ONLY on the provided JSON recon data. Do not invent vulnerabilities. Format your response strictly in Markdown with these exact sections:
 
-1. **Executive Summary** — 2-3 sentence overall risk assessment with a rating: Low / Medium / High / Critical
-2. **Attack Surface Overview** — what was discovered (subdomains, open ports, exposed paths)
-3. **Potential Attack Vectors** — specific risks deduced from the data only (do not invent vulnerabilities)
-4. **Header Security Analysis** — grade each security header as Pass / Warn / Fail with brief explanation
-5. **Actionable Remediation Steps** — numbered list, ordered by severity (Critical → Low)
-6. **Risk Score** — a definitive score integer specifically between 0 and 10, clearly marked as "Score: X/10" at the very end of the report.
+## 1. Executive Summary
+Provide a high-level overview of the target's security posture. Include a definitive risk rating (Low / Medium / High / Critical) and key takeaways suitable for non-technical management.
 
-Be precise. Only report on risks directly evidenced by the provided data."""
+## 2. Technical Attack Surface
+Summarize the exposed assets: subdomains, open ports/services, security headers, and discovered sensitive paths.
+
+## 3. Vulnerability Assessment
+Categorize identified risks (e.g., Misconfigurations, Information Disclosure). Detail the specific risk for each anomalous finding (like exposed admin panels, missing security headers, or open high-risk ports).
+
+## 4. Remediation Planning
+Provide highly actionable, prioritized recommendations organized by severity (Critical → Low) to mitigate the identified risks.
+
+## 5. Risk Score
+Conclude the report with a definitive single integer score out of 10 assessing overall risk. You must append exactly "Score: X/10" at the very end of the report where X is the score.
+"""
 
 async def stream_ai_report(scan_id: str, raw_data: dict) -> StreamingResponse:
     """Streams the AI report back to the frontend and updates the database upon completion"""

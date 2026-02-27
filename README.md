@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<div align="center">
+  <img src="https://raw.githubusercontent.com/Daniyal-Rashid-00/SentinelScan/main/public/icon.svg" alt="SentinelScan Logo" width="120" height="120" />
+</div>
 
-## Getting Started
+<h1 align="center">SentinelScan v2.0</h1>
 
-First, run the development server:
+<p align="center">
+  <strong>Automated Reconnaissance & AI-Powered Vulnerability Reporting</strong><br/>
+  <i>Lightning-fast reconnaissance layered with intelligent context.</i>
+</p>
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+<p align="center">
+  <img src="https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js" alt="Next.js" />
+  <img src="https://img.shields.io/badge/FastAPI-Python-009688?style=flat-square&logo=fastapi" alt="FastAPI" />
+  <img src="https://img.shields.io/badge/Supabase-Database-3ECF8E?style=flat-square&logo=supabase" alt="Supabase" />
+  <img src="https://img.shields.io/badge/OpenRouter-AI%20Models-white?style=flat-square" alt="OpenRouter" />
+</p>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## ⚡ Overview
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**SentinelScan** is a modern, serverless security scanning platform. It automates initial reconnaissance tasks—such as subdomain enumeration, port scanning, and sensitive path probing—and uses advanced Large Language Models (LLMs) to generate professional, compliance-ready vulnerability assessments in seconds.
 
-## Learn More
+## ✨ Features
 
-To learn more about Next.js, take a look at the following resources:
+- **🚀 Concurrent Reconnaissance**: Runs multiple reconnaissance modules (DNS brute-forcing, Certificate Transparency logs, HTTP header analysis, sensitive directory probing) entirely in parallel using Python `asyncio`.
+- **🧠 AI-Powered Assessment**: Feeds raw JSON recon data into an LLM (via OpenRouter) to write structured, actionable, and formatted Markdown reports adhering to industry standards.
+- **🌊 Instant Streaming UI**: Employs real-time Server-Sent Events (SSE) to stream the AI report line-by-line while raw scan data populates instantly on the mobile-responsive Next.js frontend.
+- **🔒 Consent Gated & Rate Limited**: Designed for ethical testing only. Integrates robust rate-limiting and private-IP blocking middleware.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Frontend**: Next.js 14 (App Router), React, Tailwind CSS, shadcn/ui
+- **Backend**: Python 3, FastAPI, `httpx`, `asyncio`
+- **Database**: Supabase (PostgreSQL) + Edge Functions
+- **AI Integration**: OpenRouter API (`arcee-ai/trinity-large-preview:free` / `deepseek-r1`)
+- **Hosting**: Vercel Serverless Functions
 
-## Deploy on Vercel
+## 🚀 Getting Started Locally
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Prerequisites
+- Node.js 18+
+- Python 3.9+
+- A Supabase project (for Postgres DB)
+- An OpenRouter API Key
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Installation
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Daniyal-Rashid-00/SentinelScan.git
+   cd SentinelScan
+   ```
+
+2. **Install dependencies:**
+   ```bash
+   npm install        # Frontend deps
+   pip install -r requirements.txt  # Backend deps
+   ```
+
+3. **Set up Environment Variables:**
+   Create a `.env.local` file in the root directory:
+   ```env
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+   OPENROUTER_API_KEY=your_openrouter_key
+   ```
+
+4. **Run the Development Server:**
+   This customized command boots up both the Next.js UI frontend and the Python FastAPI backend proxy concurrently:
+   ```bash
+   npm run dev
+   ```
+   Open [http://localhost:3000](http://localhost:3000) to view the application.
+
+## 💼 Hire a Professional
+
+Automated tools like SentinelScan are fantastic for initial surface reconnaissance, but they are no substitute for deep manual testing. If your organization requires deep-dive vulnerability analysis, business logic testing, and compliance-ready pentest reports, [contact me for a comprehensive security assessment](https://daniyal-rashid.vercel.app/).
+
+---
+<div align="center">
+<p>Developed with ❤️ by <a href="https://daniyal-rashid.vercel.app/">Daniyal Rashid</a></p>
+</div>

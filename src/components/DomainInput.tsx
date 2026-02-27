@@ -64,28 +64,28 @@ export function DomainInput() {
 
     return (
         <form onSubmit={handleScan} className="w-full max-w-2xl mx-auto space-y-6">
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <Input
                     type="text"
-                    placeholder="example.com"
+                    placeholder="Enter target domain (e.g., example.com)"
                     value={domain}
                     onChange={(e) => setDomain(e.target.value)}
                     disabled={isScanning}
-                    className="font-mono text-lg py-6 bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-emerald-500"
+                    className="font-mono text-base sm:text-lg py-5 sm:py-6 bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-emerald-500"
                     required
                 />
                 <Button
                     type="submit"
                     disabled={!consent || !domain || isScanning}
-                    className="py-6 px-8 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[160px]"
+                    className="py-5 sm:py-6 px-6 sm:px-8 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed sm:min-w-[200px]"
                 >
                     {isScanning ? (
                         <>
-                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                            <Loader2 className="w-4 h-4 sm:w-5 sm:h-5 mr-2 animate-spin" />
                             Scanning...
                         </>
                     ) : (
-                        "Scan Now"
+                        "Run Security Scan"
                     )}
                 </Button>
             </div>
