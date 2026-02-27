@@ -77,7 +77,7 @@ export function DomainInput() {
                 <Button
                     type="submit"
                     disabled={!consent || !domain || isScanning}
-                    className="py-6 px-8 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[160px]"
+                    className="py-5 px-6 bg-emerald-600 hover:bg-emerald-500 text-white text-base font-semibold transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px]"
                 >
                     {isScanning ? (
                         <>
