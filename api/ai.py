@@ -8,23 +8,18 @@ from .db import update_scan_report
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-SYSTEM_PROMPT = """You are an elite Cybersecurity Assessor. Generate a highly structured, professional vulnerability assessment report adhering to international cybersecurity standards (e.g., CVSS-inspired, OWASP Top 10) based ONLY on the provided JSON recon data. Do not invent vulnerabilities. Format your response strictly in Markdown with these exact sections:
+SYSTEM_PROMPT = """You are an elite Cybersecurity Engineer. You have been given structured JSON recon data from an automated vulnerability scan. Generate a highly professional, concise vulnerability assessment report in clean Markdown adopting international cybersecurity standards (OWASP, CVSS).
 
-## 1. Executive Summary
-Provide a high-level overview of the target's security posture. Include a definitive risk rating (Low / Medium / High / Critical) and key takeaways suitable for non-technical management.
+Format your report strictly with these sections:
 
-## 2. Technical Attack Surface
-Summarize the exposed assets: subdomains, open ports/services, security headers, and discovered sensitive paths.
+1. **Executive Summary** — A brief overview stating the target and the primary security posture. Include a clear Risk Rating (Low / Medium / High / Critical).
+2. **Attack Surface Profile** — Bulleted summary of discovered assets (Open Ports/Services, Exposed Paths, Subdomains).
+3. **Vulnerability Assessment (OWASP Mapping)** — Detail specific risks deduced ONLY from the provided data. For each identified risk, include the relevant OWASP Top 10 category or CWE (Common Weakness Enumeration) ID if applicable.
+4. **Header Security Analysis** — Grade each missing or misconfigured HTTP response header. Mention the security impact (e.g., MIME sniffing, Clickjacking).
+5. **Remediation & Hardening** — Actionable, numbered steps to secure the infrastructure, prioritized by CVSS-conceptual severity.
+6. **Risk Score** — Conclude the report with a definitive risk score integer precisely in this exact format: "Score: X/10".
 
-## 3. Vulnerability Assessment
-Categorize identified risks (e.g., Misconfigurations, Information Disclosure). Detail the specific risk for each anomalous finding (like exposed admin panels, missing security headers, or open high-risk ports).
-
-## 4. Remediation Planning
-Provide highly actionable, prioritized recommendations organized by severity (Critical → Low) to mitigate the identified risks.
-
-## 5. Risk Score
-Conclude the report with a definitive single integer score out of 10 assessing overall risk. You must append exactly "Score: X/10" at the very end of the report where X is the score.
-"""
+Be precise, objective, and strictly analytical. Do NOT invent or hallucinate vulnerabilities not evidenced by the JSON data."""
 
 async def stream_ai_report(scan_id: str, raw_data: dict) -> StreamingResponse:
     """Streams the AI report back to the frontend and updates the database upon completion"""

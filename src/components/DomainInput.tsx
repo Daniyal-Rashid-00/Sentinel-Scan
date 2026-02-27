@@ -71,13 +71,13 @@ export function DomainInput() {
                     value={domain}
                     onChange={(e) => setDomain(e.target.value)}
                     disabled={isScanning}
-                    className="font-mono text-base sm:text-lg py-5 sm:py-6 bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-emerald-500"
+                    className="font-mono text-base py-5 px-4 bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-emerald-500 shadow-sm"
                     required
                 />
                 <Button
                     type="submit"
                     disabled={!consent || !domain || isScanning}
-                    className="py-5 sm:py-6 px-6 sm:px-8 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed sm:min-w-[200px]"
+                    className="py-6 px-8 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[160px]"
                 >
                     {isScanning ? (
                         <>

@@ -300,23 +300,41 @@ export default function ReportPage() {
                     </div>
                 </div>
 
-                {/* CTA */}
-                <div className="mt-10 sm:mt-16 border-t border-zinc-800/50 pt-8 sm:pt-10">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-6 max-w-4xl mx-auto bg-zinc-900/40 p-6 md:p-8 rounded-2xl border border-zinc-800/50">
-                        <div className="text-center md:text-left">
-                            <h3 className="text-zinc-100 font-semibold text-lg mb-2">Need comprehensive penetration testing?</h3>
-                            <p className="text-zinc-400 text-sm max-w-lg">
-                                Automated scans only scratch the surface. For deep-dive vulnerability analysis, business logic testing, and compliance-ready reports, consult a cybersecurity professional.
-                            </p>
-                        </div>
-                        <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-                            <a href="https://daniyal-rashid.vercel.app/" target="_blank" className="w-full sm:w-auto px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-sm font-semibold transition-colors text-center whitespace-nowrap">
-                                Hire a Professional
+                {/* CTA / Upsell */}
+                <div className="mt-10 sm:mt-16 border-t border-zinc-800/50 pt-8 sm:pt-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+
+                        {/* Primary Upsell */}
+                        <div className="bg-emerald-900/10 border border-emerald-500/20 rounded-xl p-6 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
+                            <div>
+                                <h3 className="text-zinc-100 font-semibold mb-1">Need deeper analysis?</h3>
+                                <p className="text-zinc-400 text-sm">Automated scans only scratch the surface. Hire a professional for manual penetration testing.</p>
+                            </div>
+                            <a
+                                href="https://daniyal-rashid.vercel.app/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="shrink-0 inline-flex px-5 py-2.5 bg-zinc-100 hover:bg-white text-zinc-900 rounded-lg font-semibold transition-colors text-sm"
+                            >
+                                Contact Professional
                             </a>
-                            <Link href="/" className="w-full sm:w-auto px-6 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-sm font-medium transition-colors text-center whitespace-nowrap border border-zinc-700 hover:border-zinc-600">
+                        </div>
+
+                        {/* Secondary Action */}
+                        <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-6">
+                            <div>
+                                <h3 className="text-zinc-100 font-semibold mb-1">Scan another target</h3>
+                                <p className="text-zinc-400 text-sm">Run SentinelScan against a different domain to check its security posture.</p>
+                            </div>
+                            <Link
+                                href="/"
+                                className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold transition-colors text-sm"
+                            >
+                                <ArrowLeft className="w-4 h-4" />
                                 New Scan
                             </Link>
                         </div>
+
                     </div>
                 </div>
             </div>

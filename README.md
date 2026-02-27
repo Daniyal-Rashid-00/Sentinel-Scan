@@ -1,85 +1,108 @@
-<div align="center">
-  <img src="https://raw.githubusercontent.com/Daniyal-Rashid-00/SentinelScan/main/public/icon.svg" alt="SentinelScan Logo" width="120" height="120" />
-</div>
-
-<h1 align="center">SentinelScan v2.0</h1>
+# 🛡️ SentinelScan
 
 <p align="center">
-  <strong>Automated Reconnaissance & AI-Powered Vulnerability Reporting</strong><br/>
-  <i>Lightning-fast reconnaissance layered with intelligent context.</i>
+  <em>Automated Reconnaissance & AI-Powered Vulnerability Reporting</em>
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Next.js-14-black?style=flat-square&logo=next.js" alt="Next.js" />
-  <img src="https://img.shields.io/badge/FastAPI-Python-009688?style=flat-square&logo=fastapi" alt="FastAPI" />
-  <img src="https://img.shields.io/badge/Supabase-Database-3ECF8E?style=flat-square&logo=supabase" alt="Supabase" />
-  <img src="https://img.shields.io/badge/OpenRouter-AI%20Models-white?style=flat-square" alt="OpenRouter" />
+  <img src="https://img.shields.io/badge/Next.js-14-black" alt="Next.js">
+  <img src="https://img.shields.io/badge/FastAPI-Python-009688" alt="FastAPI">
+  <img src="https://img.shields.io/badge/AI-OpenRouter-blue" alt="OpenRouter">
+  <img src="https://img.shields.io/badge/Database-Supabase-3ECF8E" alt="Supabase">
 </p>
 
 ---
 
-## ⚡ Overview
+## 📖 Overview
 
-**SentinelScan** is a modern, serverless security scanning platform. It automates initial reconnaissance tasks—such as subdomain enumeration, port scanning, and sensitive path probing—and uses advanced Large Language Models (LLMs) to generate professional, compliance-ready vulnerability assessments in seconds.
+**SentinelScan** is a modern, serverless web application that performs rapid passive and active reconnaissance on an input domain, compiling the results into a professional vulnerability assessment report driven by AI.
+
+Built for security researchers and ethical hackers, SentinelScan runs concurrent scanning modules to gather attack surface data in seconds, streams the raw JSON to a Large Language Model, and outputs a highly readable, OWASP-mapped report in real-time.
+
+> **⚠️ Disclaimer:** This tool is for educational purposes and ethical testing only. Only scan domains you own or have explicit authorization to test.
+
+---
 
 ## ✨ Features
 
-- **🚀 Concurrent Reconnaissance**: Runs multiple reconnaissance modules (DNS brute-forcing, Certificate Transparency logs, HTTP header analysis, sensitive directory probing) entirely in parallel using Python `asyncio`.
-- **🧠 AI-Powered Assessment**: Feeds raw JSON recon data into an LLM (via OpenRouter) to write structured, actionable, and formatted Markdown reports adhering to industry standards.
-- **🌊 Instant Streaming UI**: Employs real-time Server-Sent Events (SSE) to stream the AI report line-by-line while raw scan data populates instantly on the mobile-responsive Next.js frontend.
-- **🔒 Consent Gated & Rate Limited**: Designed for ethical testing only. Integrates robust rate-limiting and private-IP blocking middleware.
-
-## 🛠️ Tech Stack
-
-- **Frontend**: Next.js 14 (App Router), React, Tailwind CSS, shadcn/ui
-- **Backend**: Python 3, FastAPI, `httpx`, `asyncio`
-- **Database**: Supabase (PostgreSQL) + Edge Functions
-- **AI Integration**: OpenRouter API (`arcee-ai/trinity-large-preview:free` / `deepseek-r1`)
-- **Hosting**: Vercel Serverless Functions
-
-## 🚀 Getting Started Locally
-
-### Prerequisites
-- Node.js 18+
-- Python 3.9+
-- A Supabase project (for Postgres DB)
-- An OpenRouter API Key
-
-### Installation
-
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/Daniyal-Rashid-00/SentinelScan.git
-   cd SentinelScan
-   ```
-
-2. **Install dependencies:**
-   ```bash
-   npm install        # Frontend deps
-   pip install -r requirements.txt  # Backend deps
-   ```
-
-3. **Set up Environment Variables:**
-   Create a `.env.local` file in the root directory:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
-   SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-   OPENROUTER_API_KEY=your_openrouter_key
-   ```
-
-4. **Run the Development Server:**
-   This customized command boots up both the Next.js UI frontend and the Python FastAPI backend proxy concurrently:
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:3000](http://localhost:3000) to view the application.
-
-## 💼 Hire a Professional
-
-Automated tools like SentinelScan are fantastic for initial surface reconnaissance, but they are no substitute for deep manual testing. If your organization requires deep-dive vulnerability analysis, business logic testing, and compliance-ready pentest reports, [contact me for a comprehensive security assessment](https://daniyal-rashid.vercel.app/).
+- **⚡ Blazing Fast Concurrent Recon**
+  - **Subdomain Enumeration:** Merges passive certificate transparency logs (`crt.sh`) with active DNS brute-forcing (100+ common prefixes).
+  - **Port Scanning:** Async connectivity checks across 15 high-profile default ports (SSH, FTP, RDP, MySQL, etc.).
+  - **Header Analysis:** Detects missing or misconfigured security headers (CSP, HSTS, X-Frame-Options).
+  - **Sensitive Path Probing:** Rapid-fires HTTP HEAD requests against 60+ known sensitive endpoints (`/.env`, `/.git/config`, `/backup.sql`, `/swagger`).
+- **🧠 AI-Powered Analysis:** Raw data is fed into an LLM via OpenRouter, which streams a contextualized, Markdown-formatted vulnerability report mapping findings to **OWASP Top 10 / CWE** standards.
+- **📱 Cyber Dark UI:** A gorgeous, responsive frontend built with Next.js, Tailwind CSS, and shadcn/ui.
+- **☁️ Serverless Ready:** Designed to deploy seamlessly on Vercel with a stateless Python FastAPI backend.
 
 ---
-<div align="center">
-<p>Developed with ❤️ by <a href="https://daniyal-rashid.vercel.app/">Daniyal Rashid</a></p>
-</div>
+
+## 🏗️ Architecture
+
+The app uses a monorepo structure:
+- **Frontend (`/src`):** Next.js App Router (React + TypeScript). Handles user input, raw data rendering, and consuming the Server-Sent Events (SSE) AI stream.
+- **Backend (`/api`):** Python FastAPI. Exposes two main endpoints (`/api/scan` and `/api/report`). Orchestrates async scanning and securely interacts with the Supabase database.
+- **Database:** Supabase (PostgreSQL). Stores raw scan JSON and final AI reports to enable shareable report links.
+
+---
+
+## 🛠️ Local Setup
+
+### 1. Prerequisites
+- **Node.js** (v18+)
+- **Python** (v3.9+)
+- **Git**
+
+### 2. Clone and Install
+```bash
+git clone https://github.com/YOUR_USERNAME/SentinelScan.git
+cd SentinelScan
+
+# Install Frontend Dependencies
+npm install
+
+# Install Backend Dependencies
+pip install -r requirements.txt
+```
+
+### 3. Environment Variables
+Create a file named `.env.local` in the root directory and add your API keys:
+
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+
+# OpenRouter Interface
+OPENROUTER_API_KEY=your_openrouter_api_key
+OPENROUTER_MODEL=arcee-ai/trinity-large-preview:free
+```
+
+### 4. Run the Development Server
+Start both the Next.js frontend and FastAPI backend concurrently with a single command:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 🚀 Deployment (Vercel)
+
+SentinelScan is ready for 1-click deployment on Vercel. Vercel automatically detects the Next.js frontend and packages the `api/index.py` file into a scalable Serverless Function.
+
+1. Import the repository into Vercel.
+2. Add the `.env.local` environment variables in the Vercel project settings.
+3. Deploy!
+
+---
+
+## 👨‍💻 Author & Professional Audits
+
+Built by **Daniyal Rashid**. 
+
+Automated scanning is only the first step in a mature security posture. If your SentinelScan report reveals potential weaknesses and you require a comprehensive, manual penetration test or architecture review, please reach out.
+
+🔗 **[Contact Daniyal for Professional Cybersecurity Consulting](https://daniyal-rashid.vercel.app/)**
