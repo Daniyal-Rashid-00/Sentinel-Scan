@@ -202,7 +202,7 @@ export default function ReportPage() {
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
             </div>
 
-            <div className="relative z-10 max-w-6xl mx-auto px-6 pt-16 pb-24">
+            <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-12 sm:pt-16 pb-24">
 
                 {/* Header */}
                 <div className="mb-8">
@@ -215,7 +215,7 @@ export default function ReportPage() {
                         <div className="flex items-center gap-4">
                             <div>
                                 <p className="text-zinc-500 text-sm font-mono mb-1">Security Report</p>
-                                <h1 className="text-2xl md:text-3xl font-bold font-mono text-zinc-100">
+                                <h1 className="text-xl sm:text-2xl md:text-3xl font-bold font-mono text-zinc-100 break-all">
                                     {scan?.domain || scanId}
                                 </h1>
                             </div>
@@ -238,11 +238,11 @@ export default function ReportPage() {
                     )}
                 </div>
 
-                {/* Main layout: 2 columns on large screens */}
-                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                {/* Main layout: raw data first on mobile, side-by-side on large */}
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 sm:gap-8">
 
-                    {/* Left: AI Report (wider) */}
-                    <div className="lg:col-span-3 space-y-4">
+                    {/* AI Report — appears second on mobile, left on desktop */}
+                    <div className="lg:col-span-3 lg:order-1 space-y-4">
                         <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl p-6">
                             <h2 className="text-zinc-200 font-semibold mb-4 flex items-center gap-2">
                                 <Shield className="w-4 h-4 text-emerald-400" />
@@ -260,8 +260,8 @@ export default function ReportPage() {
                         </div>
                     </div>
 
-                    {/* Right: Raw Data Panel */}
-                    <div className="lg:col-span-2 space-y-4">
+                    {/* Raw Data Panel — appears first on mobile, right on desktop */}
+                    <div className="lg:col-span-2 lg:order-2 space-y-4">
 
                         <ScanResultCard
                             title="Subdomains"
@@ -301,7 +301,7 @@ export default function ReportPage() {
                 </div>
 
                 {/* CTA */}
-                <div className="mt-16 text-center border-t border-zinc-800/50 pt-10">
+                <div className="mt-10 sm:mt-16 text-center border-t border-zinc-800/50 pt-8 sm:pt-10">
                     <p className="text-zinc-500 text-sm mb-4">Want to test another domain?</p>
                     <Link href="/" className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg font-semibold transition-colors">
                         <ArrowLeft className="w-4 h-4" />

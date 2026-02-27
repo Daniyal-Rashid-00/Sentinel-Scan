@@ -102,13 +102,13 @@ export function HeadersTable({ headers }: { headers: Record<string, { status: st
     return (
         <div className="space-y-2">
             {Object.entries(headers).map(([header, data]) => (
-                <div key={header} className="flex items-start justify-between gap-4 p-2.5 bg-zinc-800/30 rounded-lg">
-                    <span className="font-mono text-xs text-zinc-300 min-w-[200px]">{header}</span>
-                    <div className="flex-1 text-right">
+                <div key={header} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1.5 sm:gap-4 p-2.5 bg-zinc-800/30 rounded-lg">
+                    <span className="font-mono text-xs text-zinc-300">{header}</span>
+                    <div className="sm:text-right">
                         <span className={`inline-block px-2 py-0.5 rounded border text-xs font-mono ${getStatusColor(data.status)}`}>
                             {data.status}
                         </span>
-                        {data.value && <p className="text-zinc-500 text-xs mt-1 font-mono truncate max-w-xs ml-auto">{data.value}</p>}
+                        {data.value && <p className="text-zinc-500 text-xs mt-1 font-mono break-all sm:truncate sm:max-w-[220px] sm:ml-auto">{data.value}</p>}
                     </div>
                 </div>
             ))}
