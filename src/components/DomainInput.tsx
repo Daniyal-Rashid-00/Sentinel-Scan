@@ -67,17 +67,17 @@ export function DomainInput() {
             <div className="flex flex-col sm:flex-row gap-4">
                 <Input
                     type="text"
-                    placeholder="example.com"
+                    placeholder="Enter target domain (e.g., example.com)"
                     value={domain}
                     onChange={(e) => setDomain(e.target.value)}
                     disabled={isScanning}
-                    className="font-mono text-lg py-6 bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-emerald-500"
+                    className="font-mono text-base py-5 px-4 bg-zinc-900 border-zinc-800 text-zinc-100 placeholder:text-zinc-500 focus-visible:ring-emerald-500 shadow-sm"
                     required
                 />
                 <Button
                     type="submit"
                     disabled={!consent || !domain || isScanning}
-                    className="py-6 px-8 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed min-w-[160px]"
+                    className="py-5 px-6 bg-emerald-600 hover:bg-emerald-500 text-white text-base font-semibold transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed min-w-[140px]"
                 >
                     {isScanning ? (
                         <>
