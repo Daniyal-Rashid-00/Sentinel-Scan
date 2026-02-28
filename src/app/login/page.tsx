@@ -2,10 +2,14 @@ import { login, signup } from './actions'
 import { ShieldAlert } from 'lucide-react'
 import Link from 'next/link'
 
-export default function LoginPage({ searchParams }: { searchParams?: { error?: string; success?: string } }) {
+export default function LoginPage({ searchParams }: {
+    searchParams?: { error?: string; success?: string; mode?: string }
+}) {
     const isLoginError = searchParams?.error === 'login'
     const isSignupError = searchParams?.error === 'signup'
     const isEmailConfirmation = searchParams?.success === 'confirm'
+    const defaultSignup = searchParams?.mode === 'signup'
+
     return (
         <main className="min-h-screen flex items-center justify-center p-6 relative">
             <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
@@ -19,10 +23,27 @@ export default function LoginPage({ searchParams }: { searchParams?: { error?: s
                     <div className="text-center mb-8">
                         <ShieldAlert className="w-10 h-10 text-emerald-400 mx-auto mb-3" />
                         <h1 className="text-2xl font-bold text-zinc-100 font-mono">Authenticate</h1>
-                        <p className="text-zinc-500 mt-2 text-sm">Log in to save your scan history</p>
+                        <p className="text-zinc-500 mt-2 text-sm">Save your scan history to your account</p>
                     </div>
 
                     <form className="space-y-4">
+                        {/* Username — only shown for signup flow */}
+                        {defaultSignup && (
+                            <div>
+                                <label className="block text-zinc-400 text-sm mb-1.5" htmlFor="username">
+                                    Username <span className="text-zinc-600 text-xs">(optional)</span>
+                                </label>
+                                <input
+                                    id="username"
+                                    name="username"
+                                    type="text"
+                                    maxLength={30}
+                                    placeholder="e.g. hacker42"
+                                    className="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg px-4 py-2 text-zinc-200 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all font-mono text-sm placeholder:text-zinc-600"
+                                />
+                            </div>
+                        )}
+
                         <div>
                             <label className="block text-zinc-400 text-sm mb-1.5" htmlFor="email">Email</label>
                             <input
@@ -40,8 +61,10 @@ export default function LoginPage({ searchParams }: { searchParams?: { error?: s
                                 name="password"
                                 type="password"
                                 required
+                                minLength={6}
                                 className="w-full bg-zinc-950/50 border border-zinc-800 rounded-lg px-4 py-2 text-zinc-200 outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 transition-all font-mono text-sm"
                             />
+                            <p className="text-zinc-600 text-xs mt-1">Minimum 6 characters</p>
                         </div>
 
                         {isLoginError && (
@@ -51,7 +74,7 @@ export default function LoginPage({ searchParams }: { searchParams?: { error?: s
                         )}
                         {isSignupError && (
                             <p className="text-red-400 text-sm text-center py-2 bg-red-400/10 rounded-lg border border-red-400/20">
-                                ❌ Sign up failed. This email may already be registered.
+                                ❌ Sign up failed. Use a password of at least 6 characters.
                             </p>
                         )}
                         {isEmailConfirmation && (
@@ -60,25 +83,36 @@ export default function LoginPage({ searchParams }: { searchParams?: { error?: s
                             </p>
                         )}
 
-                        <div className="flex gap-4 pt-4">
+                        {defaultSignup ? (
+                            <button
+                                formAction={signup}
+                                className="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2.5 rounded-lg transition-colors font-mono text-sm"
+                            >
+                                Create Account
+                            </button>
+                        ) : (
                             <button
                                 formAction={login}
-                                className="flex-1 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2 rounded-lg transition-colors font-mono text-sm"
+                                className="w-full bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-bold py-2.5 rounded-lg transition-colors font-mono text-sm"
                             >
                                 Log In
                             </button>
-                            <button
-                                formAction={signup}
-                                className="flex-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-bold py-2 rounded-lg transition-colors border border-zinc-700 font-mono text-sm"
-                            >
-                                Sign Up
-                            </button>
-                        </div>
+                        )}
                     </form>
 
-                    <p className="text-zinc-600 text-xs text-center mt-6">
-                        Testing? You may need to disable "Confirm email" in Supabase to sign up instantly.
-                    </p>
+                    <div className="mt-5 pt-5 border-t border-zinc-800 flex items-center justify-between text-xs text-zinc-600">
+                        {defaultSignup ? (
+                            <>
+                                <span>Already have an account?</span>
+                                <Link href="/login" className="text-emerald-400 hover:underline">Log In</Link>
+                            </>
+                        ) : (
+                            <>
+                                <span>New to SentinelScan?</span>
+                                <Link href="/login?mode=signup" className="text-emerald-400 hover:underline">Create Account</Link>
+                            </>
+                        )}
+                    </div>
                 </div>
             </div>
         </main>

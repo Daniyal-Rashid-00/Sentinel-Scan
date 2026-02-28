@@ -15,12 +15,14 @@ export default async function DashboardPage() {
         redirect('/login')
     }
 
-    // Fetch scans for this user
+    // Fetch scans for this user (requires 'user_id' column on 'scans' table in Supabase)
     const { data: scans, error } = await supabase
         .from('scans')
         .select('id, domain, risk_score, created_at, status')
         .eq('user_id', session.user.id)
         .order('created_at', { ascending: false })
+
+    const errorMessage = error?.message || null
 
     return (
         <main className="min-h-screen relative overflow-hidden flex flex-col items-center">
@@ -54,9 +56,14 @@ export default async function DashboardPage() {
                 </div>
 
                 <div className="bg-zinc-900/50 border border-zinc-800 rounded-xl overflow-hidden shadow-2xl backdrop-blur-sm">
-                    {error ? (
-                        <div className="p-8 text-center text-red-400 font-mono">
-                            Error loading scans. Please try again later.
+                    {errorMessage ? (
+                        <div className="p-8 text-center space-y-3">
+                            <p className="text-red-400 font-mono text-sm">⚠️ Could not load scans</p>
+                            <p className="text-zinc-500 text-xs font-mono max-w-md mx-auto">
+                                This usually means the <code className="text-yellow-400">user_id</code> column is missing from your Supabase <code className="text-yellow-400">scans</code> table.
+                                Go to your Supabase dashboard → Table Editor → scans → Add column: <code className="text-yellow-400">user_id (text, nullable)</code>
+                            </p>
+                            <p className="text-zinc-600 text-xs font-mono">Error: {errorMessage}</p>
                         </div>
                     ) : !scans || scans.length === 0 ? (
                         <div className="p-12 text-center flex flex-col items-center justify-center">
