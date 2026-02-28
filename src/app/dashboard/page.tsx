@@ -4,6 +4,8 @@ import { signOut } from './actions'
 import { Shield, ArrowRight, Clock, Globe, LogOut } from 'lucide-react'
 import Link from 'next/link'
 import { RiskBadge } from '@/components/RiskBadge'
+import { Navbar } from '@/components/Navbar'
+import { Footer } from '@/components/Footer'
 
 export default async function DashboardPage() {
     const supabase = createClient()
@@ -26,6 +28,7 @@ export default async function DashboardPage() {
 
     return (
         <main className="min-h-screen relative overflow-hidden flex flex-col items-center">
+            <Navbar />
             <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
                 <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
             </div>
@@ -38,7 +41,10 @@ export default async function DashboardPage() {
                             Scan History
                         </h1>
                         <p className="text-zinc-500 mt-2 font-mono text-sm">
-                            Logged in as {session.user.email}
+                            Logged in as{' '}
+                            <span className="text-emerald-400">
+                                {session.user.user_metadata?.username || session.user.email}
+                            </span>
                         </p>
                     </div>
 
@@ -92,8 +98,10 @@ export default async function DashboardPage() {
                                                         <Clock className="w-3.5 h-3.5" />
                                                         {new Date(scan.created_at).toLocaleString()}
                                                     </span>
-                                                    <span className={scan.status === 'complete' ? 'text-emerald-500/70' : 'text-yellow-500/70'}>
-                                                        • {scan.status}
+                                                    <span className={(
+                                                        scan.status === 'complete' || scan.risk_score !== null
+                                                    ) ? 'text-emerald-500/70' : 'text-yellow-500/70'}>
+                                                        • {(scan.status === 'complete' || scan.risk_score !== null) ? 'complete' : 'scanning'}
                                                     </span>
                                                 </div>
                                             </div>
@@ -116,6 +124,7 @@ export default async function DashboardPage() {
                     )}
                 </div>
             </div>
+            <Footer />
         </main>
     )
 }

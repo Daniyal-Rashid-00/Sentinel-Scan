@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 
 // Types
 interface RawData {
@@ -137,10 +138,22 @@ export default function ReportPage() {
                         try {
                             const jsonData = JSON.parse(line.slice(6));
                             if (jsonData.text) {
-                                setAiReport((prev) => prev + jsonData.text);
+                                setAiReport((prev) => {
+                                    const updated = prev + jsonData.text;
+                                    // Also try to extract score from streamed text in real-time
+                                    const match = updated.replace(/\*/g, "").match(/Score:\s*(\d{1,2})\/10/i);
+                                    if (match) {
+                                        const parsed = Math.min(parseInt(match[1], 10), 10);
+                                        setRiskScore(parsed);
+                                    }
+                                    return updated;
+                                });
                             }
                             if (jsonData.done) {
-                                setRiskScore(jsonData.score ?? null);
+                                // Only override the client-side score if we got a non-zero value from server
+                                if (jsonData.score && jsonData.score > 0) {
+                                    setRiskScore(jsonData.score);
+                                }
                                 setIsStreamingAi(false);
                             }
                             if (jsonData.error) {
@@ -366,6 +379,7 @@ export default function ReportPage() {
                     </div>
                 </div>
             </div>
+            <Footer />
         </main>
     );
 }

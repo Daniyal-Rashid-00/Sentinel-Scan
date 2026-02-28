@@ -185,19 +185,27 @@ async def analyze_headers(domain: str) -> dict:
             xpb = resp.headers.get("X-Powered-By", "").lower()
             cookies = resp.headers.get("Set-Cookie", "").lower()
             
-            # WAF Fingerprints
+            # WAF Fingerprints — check headers case-insensitively
+            all_headers = {k.lower(): v.lower() for k, v in resp.headers.items()}
+            header_values = " ".join(all_headers.values())
+            header_keys = " ".join(all_headers.keys())
+
             waf = "None detected"
-            if "cloudflare" in server or "__cfduid" in cookies or "cf-ray" in resp.headers:
+            if "cloudflare" in all_headers.get("server", "") or "cf-ray" in all_headers or "cf-cache-status" in all_headers:
                 waf = "Cloudflare"
-            elif "awselb" in server or "awsalb" in cookies:
-                waf = "AWS WAF / ELB"
-            elif "sucuri" in server or "sucuri_cloudproxy" in cookies:
+            elif "awselb" in all_headers.get("server", "") or "awsalb" in header_values or "x-amzn-requestid" in all_headers:
+                waf = "AWS WAF / ALB"
+            elif "sucuri" in all_headers.get("server", "") or "x-sucuri-id" in all_headers:
                 waf = "Sucuri"
-            elif "akamai" in server:
+            elif "akamai" in all_headers.get("server", "") or "x-akamai-request-id" in all_headers or "x-check-cacheable" in all_headers:
                 waf = "Akamai"
-            elif "f5" in server or "bigip" in cookies:
+            elif "f5" in all_headers.get("server", "") or "bigip" in header_values or "ts" in all_headers.get("set-cookie", "")[:10]:
                 waf = "F5 BIG-IP"
-                
+            elif "incapsula" in header_values or "incap_ses" in all_headers.get("set-cookie", ""):
+                waf = "Imperva Incapsula"
+            elif "x-cdn" in all_headers or "x-fastly-request-id" in all_headers:
+                waf = "Fastly CDN"
+
             results["WAF_Detection"] = {"status": "info", "value": waf}
             
             # Tech Stack Fingerprints
