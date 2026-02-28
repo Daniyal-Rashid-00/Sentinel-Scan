@@ -86,10 +86,15 @@ async def stream_ai_report(scan_id: str, raw_data: dict) -> StreamingResponse:
                             except json.JSONDecodeError:
                                 continue
 
-            # After generation is complete, try to extract the risk score from the final text
+            # After generation is complete, extract the risk score very robustly
             import re
-            # Also allow markdown bolding like **Score: 8/10**
-            score_match = re.search(r"Score:\s*(\d{1,2})/10", full_content.replace("*", ""), re.IGNORECASE)
+            
+            # Remove all markdown formatting (*, _, #) for easier parsing
+            clean_content = re.sub(r'[*_#]', '', full_content)
+            
+            # Look for variations like "Risk Score: 1/10", "Score 1 / 10", "score: 1 /10"
+            score_match = re.search(r"(?:risk\s*)?score[\s:]*(\d{1,2})\s*(?:/|out of\s*)?\s*10", clean_content, re.IGNORECASE)
+            
             if score_match:
                 try:
                     risk_score = int(score_match.group(1))

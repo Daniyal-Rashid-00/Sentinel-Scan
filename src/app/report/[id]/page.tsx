@@ -141,7 +141,8 @@ export default function ReportPage() {
                                 setAiReport((prev) => {
                                     const updated = prev + jsonData.text;
                                     // Also try to extract score from streamed text in real-time
-                                    const match = updated.replace(/\*/g, "").match(/Score:\s*(\d{1,2})\/10/i);
+                                    const cleanText = updated.replace(/[*_#]/g, "");
+                                    const match = cleanText.match(/(?:risk\s*)?score[\s:]*(\d{1,2})\s*(?:\/|out of\s*)?\s*10/i);
                                     if (match) {
                                         const parsed = Math.min(parseInt(match[1], 10), 10);
                                         setRiskScore(parsed);
