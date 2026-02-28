@@ -28,6 +28,7 @@ interface RawData {
     subdomains: string[];
     ports: { open: number[]; closed: number[]; services: Record<string, string> };
     headers: Record<string, { status: string; value: string | null }>;
+    dns?: Record<string, { status: string; value: string | null }>;
     paths: Record<string, { status: number | string; severity: string }>;
 }
 
@@ -282,12 +283,37 @@ export default function ReportPage() {
                         </ScanResultCard>
 
                         <ScanResultCard
+                            title="Tech & WAF"
+                            icon={<Shield className="w-4 h-4" />}
+                            count={Object.keys(raw?.headers ?? {}).filter(k => k === "WAF_Detection" || k === "Tech_Stack").length || undefined}
+                        >
+                            <HeadersTable headers={
+                                // Filter to only show Tech Stack and WAF
+                                Object.fromEntries(Object.entries(raw?.headers ?? {}).filter(([k]) => k === "WAF_Detection" || k === "Tech_Stack"))
+                            } />
+                        </ScanResultCard>
+
+                        <ScanResultCard
                             title="Security Headers"
                             icon={<Shield className="w-4 h-4" />}
-                            count={Object.keys(raw?.headers ?? {}).length}
+                            count={Object.keys(raw?.headers ?? {}).filter(k => k !== "WAF_Detection" && k !== "Tech_Stack").length}
                         >
-                            <HeadersTable headers={raw?.headers ?? {}} />
+                            <HeadersTable headers={
+                                // Filter OUT Tech Stack and WAF
+                                Object.fromEntries(Object.entries(raw?.headers ?? {}).filter(([k]) => k !== "WAF_Detection" && k !== "Tech_Stack"))
+                            } />
                         </ScanResultCard>
+
+                        {raw?.dns && (
+                            <ScanResultCard
+                                title="DNS & Spoofing"
+                                icon={<Globe className="w-4 h-4" />}
+                                count={Object.keys(raw.dns).length}
+                                defaultOpen={true}
+                            >
+                                <HeadersTable headers={raw.dns} />
+                            </ScanResultCard>
+                        )}
 
                         <ScanResultCard
                             title="Sensitive Paths"

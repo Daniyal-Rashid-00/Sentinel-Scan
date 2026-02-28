@@ -4,3 +4,4 @@ httpx
 supabase
 python-dotenv
 pydantic
+dnspython
