@@ -27,18 +27,22 @@ def init_db():
     except Exception as e:
         print(f"Failed to initialize Supabase: {e}. Using in-memory fallback.")
 
-def insert_scan(domain: str, client_ip: str, raw_data: dict) -> Optional[str]:
+def insert_scan(domain: str, client_ip: str, raw_data: dict, user_id: str = None) -> Optional[str]:
     """Inserts a new scan record and returns the scan_id."""
     
     # Try Supabase first
     if supabase:
         try:
-            data, count = supabase.table('scans').insert({
+            payload = {
                 "domain": domain,
                 "client_ip": client_ip,
                 "raw_data": raw_data,
                 "status": "scanning"
-            }).execute()
+            }
+            if user_id:
+                payload["user_id"] = user_id
+                
+            data, count = supabase.table('scans').insert(payload).execute()
             
             if data[1] and len(data[1]) > 0:
                 scan_id = data[1][0]['id']
@@ -60,6 +64,7 @@ def insert_scan(domain: str, client_ip: str, raw_data: dict) -> Optional[str]:
         "ai_report": None,
         "risk_score": None,
         "status": "scanning",
+        "user_id": user_id,
         "created_at": datetime.utcnow().isoformat()
     }
     print(f"Stored scan in memory cache: {scan_id}")

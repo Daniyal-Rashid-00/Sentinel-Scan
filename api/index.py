@@ -17,6 +17,7 @@ async def startup_event():
 class ScanRequest(BaseModel):
     domain: str
     consent: bool
+    user_id: str | None = None
 
 class ReportRequest(BaseModel):
     scan_id: str
@@ -37,7 +38,7 @@ async def start_scan(request: Request, body: ScanRequest):
     raw_data = await run_scan_tasks(domain)
     
     # 2. Insert into Supabase
-    scan_id = insert_scan(domain, client_ip, raw_data)
+    scan_id = insert_scan(domain, client_ip, raw_data, body.user_id)
     
     if not scan_id:
         raise HTTPException(status_code=500, detail="Failed to initialize scan in database.")

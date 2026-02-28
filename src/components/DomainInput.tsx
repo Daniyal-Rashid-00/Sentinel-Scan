@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useRouter } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
 
 export function DomainInput() {
     const [domain, setDomain] = useState("");
@@ -22,10 +23,15 @@ export function DomainInput() {
             setIsScanning(true);
 
             try {
+                // Fetch the user session to link the scan to an account if logged in
+                const supabase = createClient();
+                const { data: { session } } = await supabase.auth.getSession();
+                const user_id = session?.user?.id || null;
+
                 const response = await fetch("/api/scan", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ domain, consent }),
+                    body: JSON.stringify({ domain, consent, user_id }),
                 });
 
                 const data = await response.json();

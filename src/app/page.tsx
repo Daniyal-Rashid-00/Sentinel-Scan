@@ -1,8 +1,9 @@
 import { DomainInput } from "@/components/DomainInput";
 import { Card } from "@/components/ui/card";
-import { Shield, Activity, Lock, Terminal, Github, Linkedin, Globe } from "lucide-react";
+import { Shield, Activity, Lock, Terminal, Github, Linkedin, Globe, User } from "lucide-react";
 import Link from "next/link";
 import { RiskBadge } from "@/components/RiskBadge";
+import { createClient } from "@/utils/supabase/server";
 
 // Placeholder data for Phase 1
 const recentScans = [
@@ -13,9 +14,26 @@ const recentScans = [
   { id: "5", domain: "vulnerable.net", score: 6, time: "5 hours ago" },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const supabase = createClient();
+  const { data: { session } } = await supabase.auth.getSession();
+
   return (
     <main className="min-h-screen relative overflow-hidden flex flex-col items-center">
+      {/* Top Nav */}
+      <nav className="w-full max-w-5xl mx-auto px-6 py-4 flex justify-end z-20 relative">
+        {session ? (
+          <Link href="/dashboard" className="flex items-center gap-2 text-sm font-mono text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 px-4 py-2 rounded-full border border-emerald-500/20 transition-colors">
+            <User className="w-4 h-4" />
+            Dashboard
+          </Link>
+        ) : (
+          <Link href="/login" className="flex items-center gap-2 text-sm font-mono text-zinc-300 bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded-full border border-zinc-700 transition-colors">
+            Log In
+          </Link>
+        )}
+      </nav>
+
       {/* Background Pattern */}
       <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
         <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
