@@ -88,7 +88,8 @@ async def stream_ai_report(scan_id: str, raw_data: dict) -> StreamingResponse:
 
             # After generation is complete, try to extract the risk score from the final text
             import re
-            score_match = re.search(r"Score:\s*(\d{1,2})/10", full_content, re.IGNORECASE)
+            # Also allow markdown bolding like **Score: 8/10**
+            score_match = re.search(r"Score:\s*(\d{1,2})/10", full_content.replace("*", ""), re.IGNORECASE)
             if score_match:
                 try:
                     risk_score = int(score_match.group(1))
