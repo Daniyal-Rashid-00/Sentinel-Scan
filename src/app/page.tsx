@@ -21,16 +21,21 @@ export default async function Home() {
   return (
     <main className="min-h-screen relative overflow-hidden flex flex-col items-center">
       {/* Top Nav */}
-      <nav className="w-full max-w-5xl mx-auto px-6 py-4 flex justify-end z-20 relative">
+      <nav className="w-full max-w-5xl mx-auto px-6 py-4 flex justify-end gap-3 z-20 relative">
         {session ? (
           <Link href="/dashboard" className="flex items-center gap-2 text-sm font-mono text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/20 px-4 py-2 rounded-full border border-emerald-500/20 transition-colors">
             <User className="w-4 h-4" />
             Dashboard
           </Link>
         ) : (
-          <Link href="/login" className="flex items-center gap-2 text-sm font-mono text-zinc-300 bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded-full border border-zinc-700 transition-colors">
-            Log In
-          </Link>
+          <>
+            <Link href="/login?mode=signup" className="flex items-center gap-2 text-sm font-mono text-zinc-950 bg-emerald-500 hover:bg-emerald-400 px-4 py-2 rounded-full font-semibold transition-colors">
+              Sign Up
+            </Link>
+            <Link href="/login" className="flex items-center gap-2 text-sm font-mono text-zinc-300 bg-zinc-800 hover:bg-zinc-700 px-4 py-2 rounded-full border border-zinc-700 transition-colors">
+              Log In
+            </Link>
+          </>
         )}
       </nav>
 
