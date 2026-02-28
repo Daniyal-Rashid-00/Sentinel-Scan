@@ -15,7 +15,7 @@ export async function login(formData: FormData) {
     const { error } = await supabase.auth.signInWithPassword(data)
 
     if (error) {
-        redirect('/login?error=true')
+        redirect('/login?error=login')
     }
 
     revalidatePath('/', 'layout')
@@ -30,12 +30,19 @@ export async function signup(formData: FormData) {
         password: formData.get('password') as string,
     }
 
-    const { error } = await supabase.auth.signUp(data)
+    const { data: authData, error } = await supabase.auth.signUp(data)
 
     if (error) {
-        redirect('/login?error=true')
+        redirect('/login?error=signup')
     }
 
-    revalidatePath('/', 'layout')
-    redirect('/dashboard')
+    // If email confirmation is enabled, the user won't have a session yet
+    if (authData.session) {
+        // User was signed up and logged in immediately (email confirmation disabled)
+        revalidatePath('/', 'layout')
+        redirect('/dashboard')
+    } else {
+        // Email confirmation is required - show a success message
+        redirect('/login?success=confirm')
+    }
 }

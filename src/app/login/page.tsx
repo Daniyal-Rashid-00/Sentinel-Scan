@@ -2,7 +2,10 @@ import { login, signup } from './actions'
 import { ShieldAlert } from 'lucide-react'
 import Link from 'next/link'
 
-export default function LoginPage({ searchParams }: { searchParams?: { error?: string } }) {
+export default function LoginPage({ searchParams }: { searchParams?: { error?: string; success?: string } }) {
+    const isLoginError = searchParams?.error === 'login'
+    const isSignupError = searchParams?.error === 'signup'
+    const isEmailConfirmation = searchParams?.success === 'confirm'
     return (
         <main className="min-h-screen flex items-center justify-center p-6 relative">
             <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
@@ -41,9 +44,19 @@ export default function LoginPage({ searchParams }: { searchParams?: { error?: s
                             />
                         </div>
 
-                        {searchParams?.error && (
+                        {isLoginError && (
                             <p className="text-red-400 text-sm text-center py-2 bg-red-400/10 rounded-lg border border-red-400/20">
-                                Invalid login credentials.
+                                ❌ Invalid email or password. Please try again.
+                            </p>
+                        )}
+                        {isSignupError && (
+                            <p className="text-red-400 text-sm text-center py-2 bg-red-400/10 rounded-lg border border-red-400/20">
+                                ❌ Sign up failed. This email may already be registered.
+                            </p>
+                        )}
+                        {isEmailConfirmation && (
+                            <p className="text-emerald-400 text-sm text-center py-2 bg-emerald-400/10 rounded-lg border border-emerald-400/20">
+                                ✅ Account created! Check your email to confirm, then log in.
                             </p>
                         )}
 
