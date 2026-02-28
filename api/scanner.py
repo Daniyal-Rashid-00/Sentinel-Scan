@@ -2,6 +2,7 @@ import asyncio
 import httpx
 import re
 import socket
+import dns.asyncresolver
 
 # ─────────────────────────────────────────────────────────────────────────────
 # COMMON SUBDOMAIN PREFIXES for DNS brute-force
@@ -170,19 +171,68 @@ async def analyze_headers(domain: str) -> dict:
             except httpx.RequestError:
                 resp = await client.get(f"http://{domain}")
 
+            # Standard Security Headers
             for header, _ in headers_to_check.items():
                 value = resp.headers.get(header)
                 if value:
                     flag = "present"
-                    if header == "Server" and re.search(r'\d', value):
-                        flag = "warn (version exposed)"
                     results[header] = {"status": flag, "value": value}
                 else:
-                    flag = "good (hidden)" if header in ("Server", "X-Powered-By") else "missing"
-                    results[header] = {"status": flag, "value": None}
+                    results[header] = {"status": "missing", "value": None}
+
+            # Tech Stack & WAF Detection
+            server = resp.headers.get("Server", "").lower()
+            xpb = resp.headers.get("X-Powered-By", "").lower()
+            cookies = resp.headers.get("Set-Cookie", "").lower()
+            
+            # WAF Fingerprints
+            waf = "None detected"
+            if "cloudflare" in server or "__cfduid" in cookies or "cf-ray" in resp.headers:
+                waf = "Cloudflare"
+            elif "awselb" in server or "awsalb" in cookies:
+                waf = "AWS WAF / ELB"
+            elif "sucuri" in server or "sucuri_cloudproxy" in cookies:
+                waf = "Sucuri"
+            elif "akamai" in server:
+                waf = "Akamai"
+            elif "f5" in server or "bigip" in cookies:
+                waf = "F5 BIG-IP"
+                
+            results["WAF_Detection"] = {"status": "info", "value": waf}
+            
+            # Tech Stack Fingerprints
+            tech = [t for t in [server, xpb] if t]
+            results["Tech_Stack"] = {"status": "info", "value": " | ".join(tech) if tech else "Unknown"}
+
     except Exception as e:
         print(f"Header analysis error: {e}")
         return {"error": "Host unreachable or timed out"}
+    return results
+
+async def check_dns_security(domain: str) -> dict:
+    """Task 3.5: Deep DNS Checks (SPF, DMARC, TXT records)"""
+    results = {}
+    resolver = dns.asyncresolver.Resolver()
+    resolver.timeout = 2.0
+    resolver.lifetime = 2.0
+
+    async def get_txt(target: str) -> list[str]:
+        try:
+            answers = await resolver.resolve(target, 'TXT')
+            return [str(r).strip('"') for r in answers]
+        except Exception:
+            return []
+
+    # Check SPF
+    txt_records = await get_txt(domain)
+    spf_record = next((r for r in txt_records if r.startswith("v=spf1")), None)
+    results["SPF_Record"] = {"status": "present" if spf_record else "missing (Spoofing risk)", "value": spf_record}
+
+    # Check DMARC
+    dmarc_records = await get_txt(f"_dmarc.{domain}")
+    dmarc_record = next((r for r in dmarc_records if r.startswith("v=DMARC1")), None)
+    results["DMARC_Record"] = {"status": "present" if dmarc_record else "missing (Spoofing risk)", "value": dmarc_record}
+
     return results
 
 
@@ -223,11 +273,12 @@ async def probe_sensitive_paths(domain: str) -> dict:
 
 
 async def run_scan_tasks(domain: str) -> dict:
-    """Orchestrates all 4 recon tasks concurrently."""
+    """Orchestrates all recon tasks concurrently."""
     results = await asyncio.gather(
         get_subdomains(domain),
         scan_ports(domain),
         analyze_headers(domain),
+        check_dns_security(domain),
         probe_sensitive_paths(domain),
     )
     return {
@@ -235,5 +286,6 @@ async def run_scan_tasks(domain: str) -> dict:
         "subdomains": results[0],
         "ports": results[1],
         "headers": results[2],
-        "paths": results[3],
+        "dns": results[3],
+        "paths": results[4],
     }

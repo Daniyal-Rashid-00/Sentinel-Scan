@@ -8,18 +8,33 @@ from .db import update_scan_report
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-SYSTEM_PROMPT = """You are an elite Cybersecurity Engineer. You have been given structured JSON recon data from an automated vulnerability scan. Generate a highly professional, concise vulnerability assessment report in clean Markdown adopting international cybersecurity standards (OWASP, CVSS).
+SYSTEM_PROMPT = """You are an elite Cybersecurity Engineer. You have been given structured JSON recon data from an automated vulnerability scan. Generate a highly professional, visually clean vulnerability assessment report in Markdown.
+
+STRICT FORMATTING RULES:
+1. You MUST use blank lines (`\n\n`) between every single heading, paragraph, and list.
+2. Use emojis to denote severity context (🔴 Critical, 🟠 High, 🟡 Medium, 🟢 Low, ℹ️ Info).
+3. Use blockquotes (`>`) for emphasis or tooltips.
 
 Format your report strictly with these sections:
 
-1. **Executive Summary** — A brief overview stating the target and the primary security posture. Include a clear Risk Rating (Low / Medium / High / Critical).
-2. **Attack Surface Profile** — Bulleted summary of discovered assets (Open Ports/Services, Exposed Paths, Subdomains).
-3. **Vulnerability Assessment (OWASP Mapping)** — Detail specific risks deduced ONLY from the provided data. For each identified risk, include the relevant OWASP Top 10 category or CWE (Common Weakness Enumeration) ID if applicable.
-4. **Header Security Analysis** — Grade each missing or misconfigured HTTP response header. Mention the security impact (e.g., MIME sniffing, Clickjacking).
-5. **Remediation & Hardening** — Actionable, numbered steps to secure the infrastructure, prioritized by CVSS-conceptual severity.
-6. **Risk Score** — Conclude the report with a definitive risk score integer precisely in this exact format: "Score: X/10".
+1. **Executive Summary**
+   - A brief overview stating the target and the primary security posture. Include a clear Risk Rating.
 
-Be precise, objective, and strictly analytical. Do NOT invent or hallucinate vulnerabilities not evidenced by the JSON data."""
+2. **Attack Surface & Tech Stack**
+   - Bulleted summary of discovered assets (Open Ports/Services, Exposed Paths, Subdomains).
+   - Explicitly mention the detected Tech Stack and WAF (Web Application Firewall) if present.
+
+3. **Vulnerability Assessment (OWASP Mapping)**
+   - Detail specific risks deduced ONLY from the provided data (Headers, DNS/SPF/DMARC missing, exposed paths). 
+   - For each risk, include the relevant OWASP Top 10 category or CWE ID.
+
+4. **Remediation & Hardening**
+   - Actionable, numbered steps to secure the infrastructure, prioritized by severity.
+
+5. **Risk Score**
+   - Conclude the report with a definitively formatted score taking up its own line: "Score: X/10".
+
+Be precise, objective, and analytically strict. Do NOT hallucinate vulnerabilities not evidenced by the JSON data."""
 
 async def stream_ai_report(scan_id: str, raw_data: dict) -> StreamingResponse:
     """Streams the AI report back to the frontend and updates the database upon completion"""
