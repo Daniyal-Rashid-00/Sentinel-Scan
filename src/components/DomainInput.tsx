@@ -19,7 +19,17 @@ export function DomainInput() {
         e.preventDefault();
         setError(null);
 
-        if (domain && consent) {
+        // Auto-extract domain if user pastes a full URL
+        let targetDomain = domain.trim().toLowerCase();
+        try {
+            const urlString = targetDomain.startsWith('http') ? targetDomain : `https://${targetDomain}`;
+            targetDomain = new URL(urlString).hostname;
+            setDomain(targetDomain); // update input visually
+        } catch (err) {
+            // Keep original input if URL parsing fails
+        }
+
+        if (targetDomain && consent) {
             setIsScanning(true);
 
             try {
@@ -31,7 +41,7 @@ export function DomainInput() {
                 const response = await fetch("/api/scan", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ domain, consent, user_id }),
+                    body: JSON.stringify({ domain: targetDomain, consent, user_id }),
                 });
 
                 const data = await response.json();
@@ -48,7 +58,7 @@ export function DomainInput() {
                             `scan_${data.scan_id}`,
                             JSON.stringify({
                                 id: data.scan_id,
-                                domain: domain,
+                                domain: targetDomain,
                                 raw_data: data.raw_data,
                                 ai_report: null,
                                 risk_score: null,
