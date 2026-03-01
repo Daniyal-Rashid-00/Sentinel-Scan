@@ -11,7 +11,7 @@ OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 SYSTEM_PROMPT = """You are an elite Cybersecurity Engineer analyzing JSON recon data from an automated vulnerability scan. Generate a thorough, medium-length assessment report in Markdown, targeting 600–900 words.
 
 STRICT FORMATTING RULES:
-1. Aim for 600–900 words. Be detailed and substantive, but stay focused and avoid padding.
+1. Aim for 600–700 words. Be detailed and substantive, but stay focused and avoid padding.
 2. You MUST use blank lines (`\n\n`) between every single heading, paragraph, and list.
 3. Use emojis to denote severity (🔴 Critical, 🟠 High, 🟡 Medium, 🟢 Low, ℹ️ Info).
 
