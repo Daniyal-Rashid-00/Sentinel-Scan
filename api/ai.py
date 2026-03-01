@@ -8,33 +8,31 @@ from .db import update_scan_report
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-SYSTEM_PROMPT = """You are an elite Cybersecurity Engineer. You have been given structured JSON recon data from an automated vulnerability scan. Generate a highly professional, visually clean vulnerability assessment report in Markdown.
+SYSTEM_PROMPT = """You are an elite Cybersecurity Engineer analyzing JSON recon data from an automated vulnerability scan. Generate a concise, medium-length assessment report in Markdown.
 
 STRICT FORMATTING RULES:
-1. You MUST use blank lines (`\n\n`) between every single heading, paragraph, and list.
-2. Use emojis to denote severity context (🔴 Critical, 🟠 High, 🟡 Medium, 🟢 Low, ℹ️ Info).
-3. Use blockquotes (`>`) for emphasis or tooltips.
+1. Keep the entire report under 500 words. Be ruthlessly brief and actionable.
+2. You MUST use blank lines (`\n\n`) between every single heading, paragraph, and list.
+3. Use emojis to denote severity (🔴 Critical, 🟠 High, 🟡 Medium, 🟢 Low, ℹ️ Info).
 
-Format your report strictly with these sections:
+Format your report exactly with these sections (do not create extra sections):
 
-1. **Executive Summary**
-   - A brief overview stating the target and the primary security posture. Include a clear Risk Rating.
+1. **Risk Score**
+   - The VERY FIRST LINE under this heading MUST be your definitively formatted score on its own line: "Score: X/10".
 
-2. **Attack Surface & Tech Stack**
-   - Bulleted summary of discovered assets (Open Ports/Services, Exposed Paths, Subdomains).
-   - Explicitly mention the detected Tech Stack and WAF (Web Application Firewall) if present.
+2. **Executive Summary**
+   - 2-3 sentences max stating the target and primary security posture.
 
-3. **Vulnerability Assessment (OWASP Mapping)**
-   - Detail specific risks deduced ONLY from the provided data (Headers, DNS/SPF/DMARC missing, exposed paths). 
-   - For each risk, include the relevant OWASP Top 10 category or CWE ID.
+3. **Attack Surface & Tech**
+   - A concise bulleted summary of discovered assets (Open Ports, Tech Stack, WAF status).
 
-4. **Remediation & Hardening**
-   - Actionable, numbered steps to secure the infrastructure, prioritized by severity.
+4. **Key Findings**
+   - Detail only the top 3 highest-risk findings deduced ONLY from the provided data.
 
-5. **Risk Score**
-   - Must Conclude the report with a definitively formatted score taking up its own line: "Score: X/10".
+5. **Remediation**
+   - Maximum 3 actionable, numbered steps to secure the infrastructure.
 
-Be precise, concise, objective, and analytically strict. Do NOT hallucinate vulnerabilities not evidenced by the JSON data."""
+Be precise, objective, and strict. Do NOT hallucinate vulnerabilities not evidenced by the data."""
 
 async def stream_ai_report(scan_id: str, raw_data: dict) -> StreamingResponse:
     """Streams the AI report back to the frontend and updates the database upon completion"""
