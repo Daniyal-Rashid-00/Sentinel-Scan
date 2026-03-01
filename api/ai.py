@@ -34,7 +34,7 @@ Format your report strictly with these sections:
 5. **Risk Score**
    - Must Conclude the report with a definitively formatted score taking up its own line: "Score: X/10".
 
-Be precise, concise objective, and analytically strict. Do NOT hallucinate vulnerabilities not evidenced by the JSON data."""
+Be precise, concise, objective, and analytically strict. Do NOT hallucinate vulnerabilities not evidenced by the JSON data."""
 
 async def stream_ai_report(scan_id: str, raw_data: dict) -> StreamingResponse:
     """Streams the AI report back to the frontend and updates the database upon completion"""
