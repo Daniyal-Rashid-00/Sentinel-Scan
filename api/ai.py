@@ -32,7 +32,7 @@ Format your report strictly with these sections:
    - Actionable, numbered steps to secure the infrastructure, prioritized by severity.
 
 5. **Risk Score**
-   - Conclude the report with a definitively formatted score taking up its own line: "Score: X/10".
+   - Must Conclude the report with a definitively formatted score taking up its own line: "Score: X/10".
 
 Be precise, objective, and analytically strict. Do NOT hallucinate vulnerabilities not evidenced by the JSON data."""
 
